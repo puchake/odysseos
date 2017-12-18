@@ -52,5 +52,5 @@ Mkfile.old
 dkms.conf
 
 # Object files and system binary.
-/obj
-/bin
+obj/
+bin/

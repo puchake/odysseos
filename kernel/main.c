@@ -15,6 +15,8 @@
 #if !defined(__i386__)
 #error "This tutorial needs to be compiled with a ix86-elf compiler"
 #endif
+
+#include "initialize.h"
  
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -104,8 +106,10 @@ extern "C" /* Use C linkage for kernel_main. */
 #endif
 void kernel_main(void) {
 	/* Initialize terminal interface */
+        initialize();
 	terminal_initialize();
  
 	/* Newline support is left as an exercise. */
 	terminal_writestring("Hello, kernel World!\n");
+    while(1){};
 }

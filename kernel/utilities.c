@@ -152,3 +152,51 @@ bool is_printable(char character) {
            || character == '\n';
 }
 
+
+void extract_word(
+    char* source_buffer, char* destination_buffer, 
+    int destination_length, int word_i
+) {
+    while (word_i != 0 && *source_buffer != 0) {
+        if (*source_buffer == ' ') {
+            word_i--;
+        }
+        source_buffer++;
+    }
+    while (*source_buffer != 0 && *source_buffer != ' ') {
+        *destination_buffer = *source_buffer;
+        destination_buffer++;
+        source_buffer++;
+    }
+}
+
+
+int atoi(char* string) {
+    int result = 0;
+    while (*string != 0) {
+        result *= 10;
+        result += *string - '0';
+        string++;
+    }
+    return result;
+}
+
+void zero_buffer(char* buffer, int max_length) {
+    for (int i = 0; i < max_length; i++) {
+        buffer[i] = 0;
+    }
+}
+
+bool strcmp(char* string_1, char* string_2) {
+    while (*string_1 != 0 && *string_2 != 0) {
+        if (*string_1 != *string_2) {
+            return false;
+        }
+        string_1++;
+        string_2++;
+    }
+    return *string_1 == *string_2;
+}
+
+
+

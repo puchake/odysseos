@@ -101,6 +101,7 @@ void update_cursor() {
 void get_input(char* buffer, int max_length) {
     char key = 0;
     int buffer_i = 0;
+    zero_buffer(buffer, max_length);
     while (key != '\n') {
         key = get_char();
         if (key == '\n') {

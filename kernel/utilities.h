@@ -46,3 +46,14 @@ int strlen(const char* str);
 
 char to_upper(char character);
 bool is_printable(char character);
+void extract_word(
+    char* source_buffer, char* destination_buffer, 
+    int destination_length, int word_i
+);
+
+
+int atoi(char* string);
+
+void zero_buffer(char* buffer, int max_length);
+
+bool strcmp(char* string_1, char* string_2);

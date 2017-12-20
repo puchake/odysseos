@@ -2,8 +2,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+void reverse(char s[]);
 
 void sleep(int time);
+
+char * itoas(int n, char s[], int system);
 
 void outb(uint16_t port, uint8_t val);
 uint8_t inb(uint16_t port);

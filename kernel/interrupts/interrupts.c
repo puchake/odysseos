@@ -4,7 +4,9 @@
 #include "../utilities.h"
 
 
+volatile int timer_i = 0;
 void timer_handler() {
+    timer_i++;
     send_eoi(TIMER_IRQ);
 }
 

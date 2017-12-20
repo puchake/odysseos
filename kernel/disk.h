@@ -1,9 +1,6 @@
 #ifndef IDE_H_INCLUDED
 #define IDE_H_INCLUDED
 
-#include "terminal.h"
-#include "io.h"
-#include "utilities.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

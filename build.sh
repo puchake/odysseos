@@ -9,6 +9,7 @@ $GCC -c kernel/terminal.c -o obj/terminal.o -std=gnu99 -ffreestanding -Wall -Wex
 $GCC -c kernel/keyboard.c -o obj/keyboard.o -std=gnu99 -ffreestanding -Wall -Wextra
 $AS kernel/interrupts/interrupts.s -o obj/interrupts_s.o
 $GCC -c kernel/interrupts/interrupts.c -o obj/interrupts_c.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+$GCC -c kernel/disk.c -o obj/disk_c.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 $AS kernel/initialize.s -o obj/initialize_s.o
 $GCC -c kernel/initialize.c -o obj/initialize_c.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 $AS boot.s -o obj/boot.o

@@ -1,4 +1,6 @@
+#include "utilities.h"
 #include "disk.h"
+#include "terminal.h"
 
 struct IDEChannelRegisters channels[2];
 
@@ -9,7 +11,7 @@ static unsigned char atapi_packet[12] = {0xA8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 struct ide_device ide_devices[4];
 
 static void printk(const char * data) {
-    terminal_writestring(data);
+    write_string(data);
 }
 
 unsigned char ide_read(unsigned char channel, unsigned char reg) {
@@ -133,24 +135,11 @@ unsigned char ide_print_error(unsigned int drive, unsigned char err) {
    return err;
 }
 
-void print_count(int point, int count, int i, int j) {
-         char lolo[10];
-         printk(itoas(point, lolo, 10));
-         printk(" count ");
-         printk(itoas(count, lolo, 10));
-         printk(" is: (i=");
-         printk(itoas(i, lolo, 10));
-         printk(", j=");
-         printk(itoas(j, lolo, 10));
-         printk(")\n");
-}
-
 void ide_initialize(unsigned int BAR0, unsigned int BAR1, unsigned int BAR2, unsigned int BAR3,
 unsigned int BAR4) {
  
    int i, j, k, count = 0;
-   char lolo[20];
- 
+
    // 1- Detect I/O Ports which interface IDE Controller:
    channels[ATA_PRIMARY  ].base  = (BAR0 & 0xFFFFFFFC) + 0x1F0 * (!BAR0);
    channels[ATA_PRIMARY  ].ctrl  = (BAR1 & 0xFFFFFFFC) + 0x3F6 * (!BAR1);
@@ -168,8 +157,6 @@ unsigned int BAR4) {
          unsigned char err = 0, type = IDE_ATA, status;
          ide_devices[count].Reserved = 0; // Assuming that no drive here.
  
-	
-	printk("dupa1\n");
          // (I) Select Drive:
          ide_write(i, ATA_REG_HDDEVSEL, 0xA0 | (j << 4)); // Select Drive.
          sleep(1); // Wait 1ms for drive select to work.
@@ -179,18 +166,15 @@ unsigned int BAR4) {
          sleep(1); // This function should be implemented in your OS. which waits for 1 ms.
                    // it is based on System Timer Device Driver.
  
-	printk("dupa2\n");
          // (III) Polling:
          if (ide_read(i, ATA_REG_STATUS) == 0) continue; // If Status = 0, No Device.
  
-	printk("dupa3\n");
          while(1) {
             status = ide_read(i, ATA_REG_STATUS);
             if ((status & ATA_SR_ERR)) {err = 1; break;} // If Err, Device is not ATA.
             if (!(status & ATA_SR_BSY) && (status & ATA_SR_DRQ)) break; // Everything is right.
          }
  
-	printk("dupa4\n");
          // (IV) Probe for ATAPI Devices:
  
          if (err != 0) {
@@ -207,22 +191,13 @@ unsigned int BAR4) {
             ide_write(i, ATA_REG_COMMAND, ATA_CMD_IDENTIFY_PACKET);
             sleep(1);
          }
- 
-	printk("dupa5\n");
+
          // (V) Read Identification Space of the Device:
 	for (int i = 0; i < 32; i++) {
 		ide_buf[i] = 0;
 	}
          ide_read_buffer(i, ATA_REG_DATA, (uint32_t *) ide_buf, 128);
 
-	terminal_writestring("After initialization:\n");
-	for (int i = 0; i < 512; i++) {
-		terminal_putchar(ide_buf[i]);
-		terminal_putchar('|');
-	}
-	terminal_newline();
- 
-	printk("dupa6\n");
          // (VI) Read Device Parameters:
          ide_devices[count].Reserved     = 1;
          ide_devices[count].Type         = type;
@@ -246,14 +221,6 @@ unsigned int BAR4) {
             ide_devices[count].Model[k + 1] = ide_buf[ATA_IDENT_MODEL + k];}
          ide_devices[count].Model[40] = 0; // Terminate String.
  
-         printk("Count ");
-         printk(itoas(count, lolo, 10));
-         printk(" is: (i=");
-         printk(itoas(i, lolo, 10));
-         printk(", j=");
-         printk(itoas(j, lolo, 10));
-         printk(")\n");
-
          count++;
       }
    }
@@ -261,12 +228,11 @@ unsigned int BAR4) {
    // 4- Print Summary:
    for (i = 0; i < 4; i++) {
       if (ide_devices[i].Reserved == 1) {
-	printk(itoas(i, lolo, 10));
 	printk(" Found ");
 	printk((const char *[]){"ATA", "ATAPI"}[ide_devices[i].Type]);
 	printk(" Drive ");
-	printk(itoas(ide_devices[i].Size / 1024 / 1024 / 2, lolo, 10));
-	printk("GB - ");
+	//printk(itoas(ide_devices[i].Size / 1024 / 1024 / 2, lolo, 10));
+	//printk("GB - ");
 	printk((char *)ide_devices[i].Model);
 	printk("\n");
 	
@@ -286,7 +252,6 @@ unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsig
    unsigned int  words      = 256; // Almost every ATA drive has a sector-size of 512-byte.
    unsigned short cyl, i;
    unsigned char head, sect, err;
-   char lolo[10];
 
    ide_write(channel, ATA_REG_CONTROL, channels[channel].nIEN = (ide_irq_invoked = 0x0) + 0x02);
 
@@ -325,9 +290,6 @@ unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsig
       lba_io[5] = 0;
       head      = (lba + 1  - sect) % (16 * 63) / (63); // Head number is written to HDDEVSEL lower 4-bits.
    }
-   terminal_writestring("LBA mode: ");
-   terminal_writestring(itoas(lba_mode, lolo, 10));
-   terminal_newline();
 
    // (II) See if drive supports DMA or not;
    dma = 0; // We don't support DMA
@@ -344,10 +306,6 @@ unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsig
       ide_write(channel, ATA_REG_HDDEVSEL, 0xE0 | (slavebit << 4) | head); // Drive & LBA
    }
    sleep(1);
-
-   terminal_writestring("Slavebit: ");
-   terminal_writestring(itoas(slavebit, lolo, 10));
-   terminal_newline();
 
    // (V) Write Parameters;
    if (lba_mode == 2) {
@@ -384,27 +342,19 @@ unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsig
    if (lba_mode == 2 && dma == 1 && direction == 1) cmd = ATA_CMD_WRITE_DMA_EXT;
    ide_write(channel, ATA_REG_COMMAND, cmd);               // Send the Command.
 
-   terminal_writestring("cmd: ");
-   terminal_writestring(itoas(cmd, lolo, 16));
-   terminal_newline();
-
    if (dma) {
       if (direction == 0) {}
       else {}
    }
    else
       if (direction == ATA_READ) {
-         // PIO Read.
-            printk("READING SECTOR1");
          for (i = 0; i < numsects; i++) {
-            printk("READING SECTOR2");
             if ((err = ide_polling(channel, 1)))
                return err; // Polling, set error and exit if there is.
 //         asm("pushw %es");
 //         asm("mov %%ax, %%es" : : "a"(selector));
 //               asm("rep insw" : : "c"(words), "d"(bus), "D"(edi)); // Receive Data.
 //         asm("popw %es");
-            printk("READING SECTOR");
             insw(bus, (uint16_t *)edi, words);
 
 //          for (unsigned int i = 0; i < words*2; i++) {

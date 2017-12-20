@@ -46,7 +46,7 @@
 
 
 struct KeyEvent {
-    char key;
+    unsigned char key;
     char event_type; 
 };
 
@@ -56,7 +56,9 @@ extern char scancode_buffer_state;
 extern char scancode_buffer[MAX_SCANCODE_LENGTH];
 
 
-struct KeyEvent translate_with_scancode_set_1(char* buffer, int buffer_length);
+struct KeyEvent translate_with_scancode_set_1(
+    char* buffer, int buffer_length, char shift_state, char capslock_state
+);
 char get_char();
 void get_input(char* buffer, int max_length);
 

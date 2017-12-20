@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include "utilities.h"
+#include "keyboard.h"
 
 
 uint8_t terminal_x;
@@ -94,5 +95,39 @@ void update_cursor() {
     outb(0x3D5, (uint8_t) (pos & 0xFF));
     outb(0x3D4, 0x0E);
     outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
+
+void get_input(char* buffer, int max_length) {
+    char key = 0;
+    int buffer_i = 0;
+    while (key != '\n') {
+        key = get_char();
+        if (key == '\n') {
+            terminal_y++;
+            terminal_x = 0;
+            if (terminal_y == VGA_HEIGHT) {
+                scroll_terminal();
+            }
+            break;
+        }
+        if (key == '\b') {
+            if (buffer_i > 0) {
+                buffer_i--;
+                terminal_x--;
+                if (terminal_x == 255) {
+                    terminal_x = VGA_WIDTH - 1;
+                    terminal_y--;
+                }
+                put_character(terminal_x, terminal_y, ' ');
+                update_cursor(); 
+            }
+            continue;
+        }
+        write_character(key);
+        update_cursor();
+        buffer[buffer_i] = key;
+        buffer_i += buffer_i == max_length - 1 ? 0 : 1;
+    }
 }
 

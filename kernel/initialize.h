@@ -56,6 +56,6 @@ extern void reload_segments();
 uint64_t create_gdt_descriptor(uint32_t base, uint32_t limit, uint16_t flag);
 uint64_t create_idt_interrupt_descriptor(uint32_t offset, uint32_t selector);
 void initialize_gdt(uint32_t gdt_offset);
-void initialize();
+void initialize_descriptors_tables();
 
 

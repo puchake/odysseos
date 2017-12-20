@@ -1,5 +1,5 @@
 #include "initialize.h"
-#include "interrupts/interrupts.h"
+#include "interrupts.h"
 #include "pic.h"
 
 
@@ -86,7 +86,7 @@ void initialize_idt(uint32_t idt_offset) {
 }
 
 
-void initialize() {
+void initialize_descriptors_tables() {
     asm("cli");
     initialize_gdt(GDT_OFFSET);
     initialize_idt(IDT_OFFSET);

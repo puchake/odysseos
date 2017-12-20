@@ -1,4 +1,6 @@
+#include <stdbool.h>
 #include "utilities.h"
+
 
 extern volatile int timer_i;
 void sleep(int time) {
@@ -141,5 +143,12 @@ int strlen(const char* str) {
 	len++;
     }
     return len;
+}
+
+
+bool is_printable(char character) {
+    return (character >= ' ' && character <= '~') 
+           || character == '\b' 
+           || character == '\n';
 }
 

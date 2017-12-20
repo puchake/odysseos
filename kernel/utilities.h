@@ -31,4 +31,18 @@ void insw(uint16_t port, uint16_t * buffer, int words);
 void insb(uint16_t port, uint8_t * buffer, int bytes);
 
 
+void set_memory(char byte, char* start, int bytes_count);
+
+
+void copy_memory(char* source, char* destination, int bytes_count);
+
+
+char to_lower(char character);
+
 char to_upper(char character);
+
+
+int strlen(const char* str);
+
+char to_upper(char character);
+bool is_printable(char character);

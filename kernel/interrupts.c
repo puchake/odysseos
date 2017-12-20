@@ -1,10 +1,12 @@
 #include "interrupts.h"
-#include "../pic.h"
-#include "../keyboard.h"
-#include "../utilities.h"
+#include "pic.h"
+#include "keyboard.h"
+#include "utilities.h"
 
 
 volatile int timer_i = 0;
+
+
 void timer_handler() {
     timer_i++;
     send_eoi(TIMER_IRQ);

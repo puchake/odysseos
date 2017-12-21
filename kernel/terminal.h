@@ -6,6 +6,7 @@
 #define VGA_MEMORY_START	0xB8000	
 
 
+// Enumeration of useable vga colors.
 enum VgaColor {
     VGA_COLOR_BLACK = 0,
     VGA_COLOR_BLUE = 1,
@@ -24,12 +25,6 @@ enum VgaColor {
     VGA_COLOR_LIGHT_BROWN = 14,
     VGA_COLOR_WHITE = 15,
 };
-
-
-extern uint8_t terminal_x;
-extern uint8_t terminal_y;
-extern uint8_t terminal_color;
-extern uint16_t* terminal_buffer;
 
 
 void initialize_terminal();

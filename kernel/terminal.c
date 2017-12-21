@@ -1,8 +1,11 @@
+// Heavily based on http://wiki.osdev.org/Bare_Bones
+
 #include "terminal.h"
 #include "utilities.h"
 #include "keyboard.h"
 
 
+// Terminal state not visible to any other module.
 uint8_t terminal_x;
 uint8_t terminal_y;
 uint8_t terminal_color;
@@ -38,7 +41,9 @@ void put_character(int x, int y, char character) {
 
 
 void write_character(char character) {
-    put_character(terminal_x, terminal_y, character);
+    if (character != '\n') {
+        put_character(terminal_x, terminal_y, character);
+    }
     terminal_x++;
     if (terminal_x == VGA_WIDTH || character == '\n') {
         terminal_x = 0;
@@ -90,11 +95,12 @@ void scroll_terminal() {
 
 
 void update_cursor() {
-    uint16_t pos = terminal_y * VGA_WIDTH + terminal_x;
+    // Change of cursor position through ports.
+    uint16_t position = terminal_y * VGA_WIDTH + terminal_x;
     outb(0x3D4, 0x0F);
-    outb(0x3D5, (uint8_t) (pos & 0xFF));
+    outb(0x3D5, (uint8_t) (position & 0xFF));
     outb(0x3D4, 0x0E);
-    outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+    outb(0x3D5, (uint8_t) ((position >> 8) & 0xFF));
 }
 
 

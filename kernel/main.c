@@ -38,7 +38,8 @@ typedef struct {
 void kernel_main(void) {
     initialize_descriptors_tables();
     initialize_terminal();
-    char lolo[30];
+    //initialize_keyboard();
+    //char lolo[30];
     char input_buffer[256] = {0};
     char command_buffer[256] = {0};
 

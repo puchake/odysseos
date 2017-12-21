@@ -1,12 +1,17 @@
 #include <stdbool.h>
 
+// Possible keyboard input states.
 #define WAITING_FOR_KEYBOARD_INPUT 	1
 #define IGNORE_KEYBOARD_INPUT 		0
+
+// Possible scancodes buffer states.
 #define SCANCODE_BUFFER_EMPTY  		1
 #define SCANCODE_BUFFER_FULL  		0
 
+// Max scancodes buffer length.
 #define MAX_SCANCODE_LENGTH	8
 
+// Bytes which have a special meaning in scancode sets.
 #define META_SCANCODE_BYTE_1    0xE0
 #define META_SCANCODE_BYTE_2    0xE1
 #define META_SCANCODE_BYTE_3    0xE2
@@ -14,11 +19,14 @@
 
 #define KEYBOARD_IN_PORT	0x60
 
+// Offset for release scan codes in set 1.
 #define SCANCODE_SET_1_RELEASE_OFFSET	0x80
 
+// Possible key event types.
 #define KEY_PRESSED	1
 #define KEY_RELEASED	0
 
+// Special keys definitions.
 #define UNKNOWN_KEY 	255
 #define ESCAPE		254
 #define LEFT_CONTROL	253
@@ -41,6 +49,7 @@
 #define NUM_LOCK	236
 #define SCROLL_LOCK	235
 
+// Possible special key states.
 #define KEY_ACTIVATED	1
 #define KEY_DEACTIVATED	0
 
@@ -51,6 +60,7 @@ struct KeyEvent {
 };
 
 
+// Global keyboard structures used also in keyboard interrupt handler.
 extern char keyboard_input_state;
 extern char scancode_buffer_state;
 extern char scancode_buffer[MAX_SCANCODE_LENGTH];
@@ -59,6 +69,6 @@ extern char scancode_buffer[MAX_SCANCODE_LENGTH];
 struct KeyEvent translate_with_scancode_set_1(
     char* buffer, int buffer_length, char shift_state, char capslock_state
 );
+void initialize_keyboard();
 char get_char();
-void get_input(char* buffer, int max_length);
 

@@ -43,9 +43,12 @@
 #define GDT_DATA_PL3 SEG_DESCTYPE(1) | SEG_PRES(1) | SEG_SAVL(0) | \
                      SEG_LONG(0)     | SEG_SIZE(1) | SEG_GRAN(1) | \
                      SEG_PRIV(3)     | SEG_DATA_RDWR
+//
 
-#define GDT_OFFSET 0x8000
-#define IDT_OFFSET 0x9000
+#define CODE_SELECTOR	0x08
+#define DATA_SELECTOR	0x10
+#define GDT_OFFSET 	0x8000
+#define IDT_OFFSET 	0x9000
 
 
 // These come from the initialize.s file.

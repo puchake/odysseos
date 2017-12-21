@@ -1,5 +1,6 @@
+// Offsets to which interrupts from PIC will be remapped.
 #define MASTER_PIC_OFFSET	0x20
-#define SLAVE_PIC_OFFSET	0x70
+#define SLAVE_PIC_OFFSET	0x28
 
 #define TIMER_IRQ 		0
 #define KEYSTROKE_IRQ 		1

@@ -2,20 +2,28 @@
 #include "utilities.h"
 
 
+// Max recognized unique scancode in set 1.
 #define MAX_TRUE_SCANCODE 	0x58
+
+// Constants related to basic keys and keys, which are produced with shift
+// activated.
 #define NUMBER_OF_KEY_FORMS 	2
 #define BASIC_KEY_FORM 		0
 #define SHIFTED_KEY_FORM	1
 
 
+// Global keyboard structures used also in keyboard interrupt handler.
 char keyboard_input_state = IGNORE_KEYBOARD_INPUT;
 char scancode_buffer_state = SCANCODE_BUFFER_EMPTY;
 char scancode_buffer[MAX_SCANCODE_LENGTH] = {0};
 
+// States of capslock and shift keys.
 char capslock_state = KEY_DEACTIVATED;
 char shift_state = KEY_DEACTIVATED;
 
-unsigned char scancodes_set_1[NUMBER_OF_KEY_FORMS][MAX_TRUE_SCANCODE] = {
+
+// Array of keys corresponding to scancodes for set 1.
+unsigned char scancodes_set_1[NUMBER_OF_KEY_FORMS][MAX_TRUE_SCANCODE + 1] = {
     {UNKNOWN_KEY, ESCAPE, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 
      '-', '=', '\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
      '[', ']', '\n', LEFT_CONTROL, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
@@ -35,6 +43,17 @@ unsigned char scancodes_set_1[NUMBER_OF_KEY_FORMS][MAX_TRUE_SCANCODE] = {
 };
 
 
+void initialize_keyboard() {
+    // Does not work :<
+    outb(0x60, 0xF0);
+    while (inb(0x60) != 0xFA) {
+    }
+    outb(0x60, 0x01);
+    while (inb(0x60) != 0xFA) {
+    }
+}
+
+
 struct KeyEvent translate_with_scancode_set_1(
     char* buffer, int buffer_length, char shift_state, char capslock_state
 ) {
@@ -43,6 +62,8 @@ struct KeyEvent translate_with_scancode_set_1(
                     BASIC_KEY_FORM : SHIFTED_KEY_FORM;
     char event_type = KEY_PRESSED;
     unsigned char true_code = buffer[0];
+    // In set 1 multimedia keys start with additional 0xE0 byte. These keys are
+    // not handled, so this function discards them.
     if (buffer[0] == (char) 0xE0) {
         struct KeyEvent key_event = {
             .key = UNKNOWN_KEY, 
@@ -50,6 +71,8 @@ struct KeyEvent translate_with_scancode_set_1(
         };
         return key_event;
     }
+    // In set 1 scancode for key release is 0x80 + scancode for key press, but
+    // both of these scancodes refer to the same key. 
     if (true_code > SCANCODE_SET_1_RELEASE_OFFSET) {
         event_type = KEY_RELEASED;
         true_code -= SCANCODE_SET_1_RELEASE_OFFSET;
@@ -71,6 +94,7 @@ char get_char() {
     do {
 	scancode_buffer_state = SCANCODE_BUFFER_EMPTY;
 	keyboard_input_state = WAITING_FOR_KEYBOARD_INPUT;
+        // Wait for keyboard interrupt to fill scancodes buffer.
 	while (scancode_buffer_state == SCANCODE_BUFFER_EMPTY) {
 	}
 	key_event = translate_with_scancode_set_1(
@@ -85,6 +109,8 @@ char get_char() {
                              KEY_ACTIVATED : KEY_DEACTIVATED;
         }
     }
+    // Keep asking for keyboard input until produced key is both printable and 
+    // pressed.
     while (!is_printable(key_event.key) 
            || key_event.event_type == KEY_RELEASED);
     return key_event.key;

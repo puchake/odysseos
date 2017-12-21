@@ -69,20 +69,18 @@ void initialize_gdt(uint32_t gdt_offset) {
 void initialize_idt(uint32_t idt_offset) {
     // Create descriptors for wrappers in initialize.h
     uint64_t timer_descriptor = create_idt_interrupt_descriptor(
-        (intptr_t) timer_wrapper, 0x08
+        (intptr_t) timer_wrapper, CODE_SELECTOR
     );
     uint64_t keystroke_descriptor = create_idt_interrupt_descriptor(
-        (intptr_t) keystroke_wrapper, 0x08
+        (intptr_t) keystroke_wrapper, CODE_SELECTOR
     );
     // Fill IDT with them.
     uint64_t* idtr = (uint64_t*) idt_offset;
-    *(idtr + 0x08 + TIMER_IRQ) = timer_descriptor;
-    *(idtr + 0x08 + KEYSTROKE_IRQ) = keystroke_descriptor;
     *(idtr + MASTER_PIC_OFFSET + TIMER_IRQ) = timer_descriptor;
     *(idtr + MASTER_PIC_OFFSET + KEYSTROKE_IRQ) = keystroke_descriptor;
-    // 127 is minimal IDT limit.
-    set_idtr(idt_offset, 127);
-    //remap_pic(MASTER_PIC_OFFSET, SLAVE_PIC_OFFSET);
+    // 2047 IDT limit equals to 256 interrupts.
+    set_idtr(idt_offset, 2047);
+    remap_pic(MASTER_PIC_OFFSET, SLAVE_PIC_OFFSET);
 }
 
 

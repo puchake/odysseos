@@ -15,6 +15,7 @@ static void printk(const char * data) {
 }
 
 unsigned char ide_read(unsigned char channel, unsigned char reg) {
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
    unsigned char result = 0xFF;
    if (reg > 0x07 && reg < 0x0C)
       ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIEN);
@@ -32,6 +33,7 @@ unsigned char ide_read(unsigned char channel, unsigned char reg) {
 }
 
 void ide_write(unsigned char channel, unsigned char reg, unsigned char data) {
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
    if (reg > 0x07 && reg < 0x0C)
       ide_write(channel, ATA_REG_CONTROL, 0x80 | channels[channel].nIEN);
    if (reg < 0x08)
@@ -49,6 +51,9 @@ void ide_write(unsigned char channel, unsigned char reg, unsigned char data) {
 
 void ide_read_buffer(unsigned char channel, unsigned char reg, uint32_t * buffer,
                      unsigned int quads) {
+
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
+   //Modified because of a serious bug described below.
    /* WARNING: This code contains a serious bug. The inline assembly trashes ES and
     *           ESP for all of the code the compiler generates between the inline
     *           assembly blocks.
@@ -71,6 +76,7 @@ void ide_read_buffer(unsigned char channel, unsigned char reg, uint32_t * buffer
 
 unsigned char ide_polling(unsigned char channel, unsigned int advanced_check) {
  
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
    // (I) Delay 400 nanosecond for BSY to be set:
    // -------------------------------------------------
    for(int i = 0; i < 4; i++)
@@ -137,7 +143,8 @@ unsigned char ide_print_error(unsigned int drive, unsigned char err) {
 
 void ide_initialize(unsigned int BAR0, unsigned int BAR1, unsigned int BAR2, unsigned int BAR3,
 unsigned int BAR4) {
- 
+
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
    int i, j, k, count = 0;
 
    // 1- Detect I/O Ports which interface IDE Controller:
@@ -241,9 +248,13 @@ unsigned int BAR4) {
    }
 }
 
-
 unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsigned int lba, 
                              unsigned char numsects, unsigned short selector, char * edi) {
+
+   //Copied from http://wiki.osdev.org/PCI_IDE_Controller
+   //Modified because of errors connected with selector, which is not 
+   //necessary for reading now.
+   //Selector is used now for writing only (not tested yet).
    unsigned char lba_mode /* 0: CHS, 1:LBA28, 2: LBA48 */, dma /* 0: No DMA, 1: DMA */, cmd;
    unsigned char lba_io[6];
    unsigned int  channel      = ide_devices[drive].Channel; // Read the Channel.

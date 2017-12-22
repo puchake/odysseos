@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include "utilities.h"
 
-
 extern volatile int timer_i;
 void sleep(int time) {
     int s_time = timer_i + time;
@@ -24,7 +23,6 @@ extern inline void outl(uint16_t port, uint32_t val)
   asm volatile ( "outl %0, %1" : : "a"(val), "d"(port) );
 }
 
-
 extern inline uint8_t inb(uint16_t port)
 {
     // Copied from http://wiki.osdev.org
@@ -40,15 +38,15 @@ void reverse(char s[])
     int i, j;
     char c;
 
-	for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+    for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
 	 c = s[i];
 	 s[i] = s[j];
 	 s[j] = c;
     }
 }
 
-
 char * itoas(int n, char s[], int system) {
+     //converts integer into a string in specified system (e.g. hex or dec)
      int i, sign;
      char signs[16] = "0123456789ABCDEF";
  
@@ -96,8 +94,6 @@ extern inline void insb(uint16_t port, uint8_t * buffer, int bytes) {
     asm("rep insb" : : "c"(bytes), "d"(port), "D"(buffer));
 }
 
-
-
 void set_memory(char byte, char* start, int bytes_count) {
     while (bytes_count != 0) {
         *start = byte;
@@ -105,7 +101,6 @@ void set_memory(char byte, char* start, int bytes_count) {
         bytes_count--;
     }
 }
-
 
 void copy_memory(char* source, char* destination, int bytes_count) {
     while (bytes_count != 0) {
@@ -116,7 +111,6 @@ void copy_memory(char* source, char* destination, int bytes_count) {
     }
 }
 
-
 char to_lower(char character) {
     if (character >= 'A' && character <= 'Z') {
         return character + ('a' - 'A');
@@ -125,7 +119,6 @@ char to_lower(char character) {
         return character;
     }
 }
-
 
 char to_upper(char character) {
     if (character >= 'a' && character <= 'z') {
@@ -136,7 +129,6 @@ char to_upper(char character) {
     }
 }
 
-
 int strlen(const char* str) {
     int len = 0;
     while (str[len]) {
@@ -145,13 +137,11 @@ int strlen(const char* str) {
     return len;
 }
 
-
 bool is_printable(char character) {
     return (character >= ' ' && character <= '~') 
            || character == '\b' 
            || character == '\n';
 }
-
 
 void extract_word(
     char* source_buffer, char* destination_buffer, 
@@ -170,7 +160,6 @@ void extract_word(
     }
 }
 
-
 int atoi(char* string) {
     int result = 0;
     while (*string != 0) {
@@ -187,7 +176,7 @@ void zero_buffer(char* buffer, int max_length) {
     }
 }
 
-bool strcmp(char* string_1, char* string_2) {
+bool strcmp(const char* string_1, const char* string_2) {
     while (*string_1 != 0 && *string_2 != 0) {
         if (*string_1 != *string_2) {
             return false;
@@ -197,6 +186,3 @@ bool strcmp(char* string_1, char* string_2) {
     }
     return *string_1 == *string_2;
 }
-
-
-

@@ -38,4 +38,5 @@ void write_character(char character);
 void clear_terminal();
 void scroll_terminal();
 void update_cursor();
+void get_input(char* buffer, int max_length);
 

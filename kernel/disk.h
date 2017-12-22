@@ -5,7 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
+//Each define here is for ATA PIO Mode communication
+//Status register codes
 #define ATA_SR_BSY     0x80    // Busy
 #define ATA_SR_DRDY    0x40    // Drive ready
 #define ATA_SR_DF      0x20    // Drive write fault
@@ -15,6 +16,7 @@
 #define ATA_SR_IDX     0x02    // Inlex
 #define ATA_SR_ERR     0x01    // Error
 
+//Error codes
 #define ATA_ER_BBK      0x80    // Bad sector
 #define ATA_ER_UNC      0x40    // Uncorrectable data
 #define ATA_ER_MC       0x20    // No media
@@ -24,6 +26,7 @@
 #define ATA_ER_TK0NF    0x02    // Track 0 not found
 #define ATA_ER_AMNF     0x01    // No address mark
 
+//Commands
 #define ATA_CMD_READ_PIO          0x20
 #define ATA_CMD_READ_PIO_EXT      0x24
 #define ATA_CMD_READ_DMA          0xC8
@@ -53,9 +56,11 @@
 #define ATA_IDENT_COMMANDSETS  164
 #define ATA_IDENT_MAX_LBA_EXT  200
 
+//IDE Controller disk types
 #define IDE_ATA        0x00
 #define IDE_ATAPI      0x01
  
+//Bus' Devices
 #define ATA_MASTER     0x00
 #define ATA_SLAVE      0x01
 

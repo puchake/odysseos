@@ -13,6 +13,7 @@ $GCC -c kernel/disk.c -o obj/disk_c.o -std=gnu99 -ffreestanding -O2 -Wall -Wextr
 $AS kernel/initialize.s -o obj/initialize_s.o
 $GCC -c kernel/initialize.c -o obj/initialize_c.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 $AS boot.s -o obj/boot.o
+$GCC -c kernel/commands.c -o obj/commands.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 $GCC -c kernel/main.c -o obj/main.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 $GCC -T linker.ld -o bin/os.bin -ffreestanding -O2 -nostdlib obj/* -lgcc
 

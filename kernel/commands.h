@@ -10,4 +10,6 @@ typedef struct {
 
 void read_disk(const char * input_buffer);
 
+void write_disk(const char * input_buffer);
+
 #endif

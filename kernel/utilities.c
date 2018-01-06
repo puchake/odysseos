@@ -94,6 +94,18 @@ extern inline void insb(uint16_t port, uint8_t * buffer, int bytes) {
     asm("rep insb" : : "c"(bytes), "d"(port), "D"(buffer));
 }
 
+extern inline void outsl(uint16_t port, const uint32_t * buffer, int quads) {
+    asm("rep outsl" :: "c"(quads), "d"(port), "S"(buffer));
+}
+
+extern inline void outsw(uint16_t port, const uint16_t * buffer, int words) {
+    asm("rep outsw" :: "c"(words), "d"(port), "S"(buffer));
+}
+
+extern inline void outsb(uint16_t port, const uint8_t * buffer, int bytes) {
+    asm("rep outsb" :: "c"(bytes), "d"(port), "S"(buffer));
+}
+
 void set_memory(char byte, char* start, int bytes_count) {
     while (bytes_count != 0) {
         *start = byte;

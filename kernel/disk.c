@@ -377,10 +377,13 @@ unsigned char ide_ata_access(unsigned char direction, unsigned char drive, unsig
       // PIO Write.
          for (i = 0; i < numsects; i++) {
             ide_polling(channel, 0); // Polling.
-            asm("pushw %ds");
-            asm("mov %%ax, %%ds"::"a"(selector));
-            asm("rep outsw"::"c"(words), "d"(bus), "S"(edi)); // Send Data
-            asm("popw %ds");
+
+            //asm("pushw %ds");
+            //asm("mov %%ax, %%ds"::"a"(selector));
+            //asm("rep outsw"::"c"(words), "d"(bus), "S"(edi)); // Send Data
+            //asm("popw %ds");
+
+              outsw(bus, (uint16_t *)edi, words);
             edi += (words*2);
          }
          ide_write(channel, ATA_REG_COMMAND, (char []) {   ATA_CMD_CACHE_FLUSH,

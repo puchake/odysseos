@@ -33,6 +33,12 @@ void insw(uint16_t port, uint16_t * buffer, int words);
 
 void insb(uint16_t port, uint8_t * buffer, int bytes);
 
+void outsl(uint16_t port, const uint32_t * buffer, int quads);
+
+void outsw(uint16_t port, const uint16_t * buffer, int words);
+
+void outsb(uint16_t port, const uint8_t * buffer, int bytes);
+
 void set_memory(char byte, char* start, int bytes_count);
 
 void copy_memory(char* source, char* destination, int bytes_count);

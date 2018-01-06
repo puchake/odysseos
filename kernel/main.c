@@ -13,11 +13,13 @@ void kernel_main(void) {
     initialize_descriptors_tables();
     initialize_terminal();
     //initialize_keyboard();
+    write_string("dupadupa\n");
     char input_buffer[256] = {0};
     char command_buffer[256] = {0};
 
     command commands[] = {
-        { read_disk, "readdisk" }
+        { read_disk, "readdisk" },
+        { write_disk, "writedisk" }
     };
     
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000);

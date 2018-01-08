@@ -1,6 +1,7 @@
 #include <stdbool.h>
 
 // Possible keyboard input states.
+#define WAITING_FOR_KEYBOARD_RESPONSE 	2
 #define WAITING_FOR_KEYBOARD_INPUT 	1
 #define IGNORE_KEYBOARD_INPUT 		0
 
@@ -69,6 +70,7 @@ extern char scancode_buffer[MAX_SCANCODE_LENGTH];
 struct KeyEvent translate_with_scancode_set_1(
     char* buffer, int buffer_length, char shift_state, char capslock_state
 );
-void initialize_keyboard();
+bool set_scancodes_set(char set_number);
+char get_scancodes_set() ;
 char get_char();
 

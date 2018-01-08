@@ -32,6 +32,11 @@ void keystroke_handler() {;
         scancode_buffer_state = SCANCODE_BUFFER_FULL;
         keyboard_input_state = IGNORE_KEYBOARD_INPUT; 
     }
+    else if (keyboard_input_state == WAITING_FOR_KEYBOARD_RESPONSE) {
+	// Handle keyboard command response.
+        scancode_buffer[0] = inb(KEYBOARD_IN_PORT);
+        keyboard_input_state = IGNORE_KEYBOARD_INPUT; 
+    }
     else {
         // If nothing is waiting for input, simply read one byte from
         // keyboard's port to prevent keyboard's interrupt from locking.

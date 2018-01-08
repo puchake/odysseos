@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "utilities.h"
+#include "keyboard_controller.h"
 
 
 // Max recognized unique scancode in set 1.
@@ -43,14 +44,37 @@ unsigned char scancodes_set_1[NUMBER_OF_KEY_FORMS][MAX_TRUE_SCANCODE + 1] = {
 };
 
 
-void initialize_keyboard() {
-    // Does not work :<
-    outb(0x60, 0xF0);
-    while (inb(0x60) != 0xFA) {
+char get_scancodes_set() {
+    keyboard_input_state = WAITING_FOR_KEYBOARD_RESPONSE;
+    send_byte_to_keyboard(SET_GET_SCANCODES_SET);
+    // Wait for keyboard response which will come in interrupt.
+    while (keyboard_input_state == WAITING_FOR_KEYBOARD_RESPONSE);
+    if (scancode_buffer[0] == (char) KEYBOARD_ACK) {
+        send_byte_to_keyboard(GET_SCANCODES_SET);
+    	// Wait for keyboard response which will come in interrupt.
+        while (keyboard_input_state == WAITING_FOR_KEYBOARD_RESPONSE);
+        if (scancode_buffer[0] == (char) KEYBOARD_ACK) {
+	    return inb(KEYBOARD_DATA_PORT);
+	}
     }
-    outb(0x60, 0x01);
-    while (inb(0x60) != 0xFA) {
+    return -1;
+}
+
+
+bool set_scancodes_set(char set_number) {
+    keyboard_input_state = WAITING_FOR_KEYBOARD_RESPONSE;
+    send_byte_to_keyboard(SET_GET_SCANCODES_SET);
+    // Wait for keyboard response which will come in interrupt.
+    while (keyboard_input_state == WAITING_FOR_KEYBOARD_RESPONSE);
+    if (scancode_buffer[0] == (char) KEYBOARD_ACK) {
+        send_byte_to_keyboard(set_number);
+    	// Wait for keyboard response which will come in interrupt.
+        while (keyboard_input_state == WAITING_FOR_KEYBOARD_RESPONSE);
+        if (scancode_buffer[0] == (char) KEYBOARD_ACK) {
+	    return true;
+	}
     }
+    return false;
 }
 
 

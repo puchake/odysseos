@@ -12,14 +12,21 @@
 void kernel_main(void) {
     initialize_descriptors_tables();
     initialize_terminal();
-    //initialize_keyboard();
-    write_string("dupadupa\n");
+    if (initialize_keyboard_controller()) {
+	write_string("Keyboard controller has been initialized.\n");
+    }
+    else {
+	write_string("Error in keyboard controller initialization.\n");
+    }
     char input_buffer[256] = {0};
     char command_buffer[256] = {0};
 
     command commands[] = {
         { read_disk, "readdisk" },
-        { write_disk, "writedisk" }
+        { write_disk, "writedisk" },
+        { print_keyboard_state, "print_keyboard_state" },
+        { get_scancodes_set_command, "get_scancodes_set" },
+        { set_scancodes_set_command, "set_scancodes_set" }
     };
     
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000);

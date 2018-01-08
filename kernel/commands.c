@@ -1,6 +1,9 @@
 #include "disk.h"
 #include "terminal.h"
 #include "utilities.h"
+#include "keyboard.h"
+#include "keyboard_controller.h"
+
 
 void read_disk(const char * input_buffer) {
     unsigned char buffer[1024] = {0};
@@ -20,6 +23,90 @@ void read_disk(const char * input_buffer) {
     }
     write_string("\n");
 }
+
+
+void print_keyboard_state(const char * input_buffer) {
+    write_string("Keyboard status:\n");
+    struct KeyboardState state = get_keyboard_state();
+    write_string("Output buffer status: ");
+    if (state.output_status == OUTPUT_BUFFER_EMPTY) {
+	write_string("Empty\n");
+    }
+    else {
+        write_string("Full\n");
+    }
+    write_string("Input buffer status: ");
+    if (state.input_status == INPUT_BUFFER_EMPTY) {
+	write_string("Empty\n");
+    }
+    else {
+        write_string("Full\n");
+    }
+    write_string("System status: ");
+    if (state.system_status == SYSTEM_POWER_UP) {
+	write_string("Power up\n");
+    }
+    else {
+        write_string("Initialized\n");
+    }
+    write_string("A2 line status: ");
+    if (state.a2_state == A2_PORT_0X60) {
+	write_string("Port 0x60 was last written to.\n");
+    }
+    else {
+        write_string("Port 0x64 was last written to.\n");
+    }
+    write_string("Keyboard inhibit flag: ");
+    if (state.inhibit_flag == KEYBOARD_INHIBITED) {
+	write_string("Keyboard is inhibited.\n");
+    }
+    else {
+        write_string("Keyboard is active.\n");
+    }
+    write_string("Mouse output buffer status: ");
+    if (state.mouse_output_status == OUTPUT_BUFFER_EMPTY) {
+	write_string("Empty\n");
+    }
+    else {
+        write_string("Full\n");
+    }
+    write_string("Timeout flag: ");
+    if (state.timeout_flag == NO_KEYBOARD_TIMEOUT) {
+	write_string("No error\n");
+    }
+    else {
+        write_string("Error\n");
+    }
+    write_string("Parity flag: ");
+    if (state.parity_flag == NO_PARITY_ERROR) {
+	write_string("No error\n");
+    }
+    else {
+        write_string("Error\n");
+    }
+}
+
+void get_scancodes_set_command(const char * input_buffer) {
+    write_string("Active scancodes set is: ");
+    char set_number = get_scancodes_set();
+    write_character(set_number);
+    write_string("\n");
+}
+
+
+void set_scancodes_set_command(const char * input_buffer) {
+    char argument_buffer[256] = {0};
+    char set_number;
+    extract_word(input_buffer, argument_buffer, 256, 1);
+    set_number = atoi(argument_buffer);
+    if (set_scancodes_set(set_number)) {
+        write_string("Scancodes set changed successfully.\n");
+    }
+    else {
+        write_string("Scancodes set change failed.\n");
+    }
+}
+
 
 void write_disk(const char * input_buffer) {
     unsigned char buffer[1024] = {0};
